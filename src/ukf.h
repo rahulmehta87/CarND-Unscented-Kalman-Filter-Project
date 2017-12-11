@@ -3,6 +3,7 @@
 
 #include "measurement_package.h"
 #include "Eigen/Dense"
+#include "tools.h"
 #include <vector>
 #include <string>
 #include <fstream>
@@ -67,6 +68,8 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  Tools tools_;
+
 
   /**
    * Constructor
@@ -102,6 +105,25 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+  void AugmentedSigmaPoints(MatrixXd* Xsig_out);
+
+  void SigmaPointPrediction(MatrixXd Xsig_aug, MatrixXd* Xsig_out, double delta_t);
+
+  void PredictMeanAndCovariance(VectorXd* x_out, MatrixXd* P_out);
+
+  void PredictRadarMeasurement(VectorXd* z_out, MatrixXd* S_out, MatrixXd* Zsig_out);
+
+  void PredictLidarMeasurement(VectorXd* z_out, MatrixXd* S_out, MatrixXd* Zsig_out);
+
+  void UpdateState(MatrixXd Zsig, VectorXd z_pred, MatrixXd S, VectorXd z);
+
+  void CalculateNIS(VectorXd z, VectorXd z_pred, MatrixXd S);
+
+public:
+
+  // previous timestamp
+  long long previous_timestamp_;
 };
 
 #endif /* UKF_H */
